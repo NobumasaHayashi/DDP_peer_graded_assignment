@@ -1,0 +1,48 @@
+---
+title: "Developing Data Products Course Project: Wage prediction model"
+author: "Nobumasa Hayashi"
+date: "12/10/2020"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Executive Summary
+
+In this project, I build a linear regression model with multiple predictors to fit the wage from a data set of "Mid-Atlantic Wage Data". Here, I chose three predictors including "age", "job class", and "education level". Based on this model, my shiny app predicts the wage from your choices of "age", "job class" and "education level".
+
+
+## Shiny application and related repository
+My shiny app is posted on the following website.
+<https://nobumasah5183.shinyapps.io/wage_fit/>
+
+GitHub repository containing related files is the following.
+<https://github.com/NobumasaHayashi/DDP_peer_graded_assignment>
+
+
+## The concept of this model 
+The model is constructed by the following code.
+
+```{r preparation, warning=FALSE, echo=TRUE, results=FALSE, message = FALSE}
+library(ISLR)
+library(plotly)
+library(caret)
+data(Wage)
+inTrain <- createDataPartition(y=Wage$wage,
+                               p = 0.7, list = FALSE)
+training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+modFit <- train(wage ~ age + jobclass + education,
+                method = "lm", data = training)
+finMod <- modFit$finalModel
+finMod$coefficients
+```
+
+## Prediction of the wage using the model
+The constructed model predict the outcome pretty well.
+```{r prediction, echo=TRUE,warning = FALSE}
+pred <- predict(modFit, testing)
+plot_ly(x = ~testing$wage, y = ~pred,mode = "markers", type = "scatter")
+```
+
